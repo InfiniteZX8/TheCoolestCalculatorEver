@@ -138,7 +138,7 @@ namespace CalcTest
 		{
 			std::string hex2 = "0xB3A0";
 			std::string result = coolProcessor->ToHex(45984);
-			Assert::IsTrue(hex2 == result)
+			Assert::IsTrue(hex2 == result);
 		}
 
 		TEST_METHOD(ProcTest10)
