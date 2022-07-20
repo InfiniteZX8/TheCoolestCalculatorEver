@@ -1,12 +1,28 @@
 #include "Main.h"
 #include "buttonFactory.h"
+#include "CalcProcessor.h"
 
 wxBEGIN_EVENT_TABLE(Main, wxFrame)
 wxEND_EVENT_TABLE()
 
+std::string xnumbers;
+
+bool _opWasPressed = true;
+bool _equalWasPressed = false;
+bool _isBin = false;
+bool _isHex = false;
+bool _isDec = true;
+char op;
+int num1, num2, result;
+
 Main::Main() : wxFrame(nullptr, wxID_ANY, "The Coolest Calculator Ever Made", wxPoint(30, 30), wxSize(500, 700)) {
+
 	buttonFactory CoolFactory;
+
+	num1 = 0; num2 = 0;
+
 	buttons = new wxButton * [21];
+	
 	coolTextBox = new wxTextCtrl(this, 10069, "", wxPoint(10, 10), wxSize(460, 100));
 
 	coolButtonHex = CoolFactory.CreateButton(this,10011);/*new wxButton(this, 10011, "HEX", wxPoint(10, 130), wxSize(80, 70));*/
@@ -67,77 +83,306 @@ Main::Main() : wxFrame(nullptr, wxID_ANY, "The Coolest Calculator Ever Made", wx
 };
 
 Main::~Main() {
-
+	delete [] buttons;
 }
 
-void Main::OnButtonClicked(wxCommandEvent &_evt) {
-
+void Main::OnButtonClicked(wxCommandEvent &_evt) {	
 	int coolAction = _evt.GetId();
-
 		switch (coolAction){
 
 		case 10000:{
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+				
+				_equalWasPressed = false;
+				
+				xnumbers = "";
+			}
 			*coolTextBox << "0";
+			xnumbers += "0";
 			break;}
 		case 10001:{
-			*coolTextBox << "1";
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+
+				xnumbers = "";
+			}*coolTextBox << "1";
+			xnumbers += "1";
 			break;}
 		case 10002:{
-			*coolTextBox << "2";
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+
+				xnumbers = "";
+			}*coolTextBox << "2";
+			xnumbers += "2";
 			break;}
 		case 10003: {
-			*coolTextBox << "3";
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+
+				xnumbers = "";
+			}*coolTextBox << "3";
+			xnumbers += "3";
 			break; }
 		case 10004: {
-			*coolTextBox << "4";
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+
+				xnumbers = "";
+			}*coolTextBox << "4";
+			xnumbers += "4";
 			break; }
 		case 10005:{
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+
+				xnumbers = "";
+			}
 			*coolTextBox << "5";
+			xnumbers += "5";
 			break;}
 		case 10006: {
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+
+				xnumbers = "";
+			}
 			*coolTextBox << "6";
+			xnumbers += "6";
 			break; }
 		case 10007: {
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+				
+			}
 			*coolTextBox << "7";
+			xnumbers += "7";
 			break; }
 		case 10008: {
+			
+			if (_equalWasPressed) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = false;
+
+			}
 			*coolTextBox << "8";
+			xnumbers += "8";
 			break; }
 		case 10009: {
-			*coolTextBox << "9";
+				
+				if (_equalWasPressed) {
+
+					coolTextBox->Clear();
+
+					_equalWasPressed = false;
+
+				}
+				*coolTextBox << "9";
+				xnumbers += "9";
+				break; 
+		}
+		case 10010: {//DEC
+			
+			if (!_isDec && _isBin){
+
+			coolTextBox->Clear();
+
+			*coolTextBox << xnumbers;
+
+			_isDec = true;
+			_isBin = false;
+			_opWasPressed = true;
+			}
+			else if (!_isDec && _isHex) {
+				coolTextBox->Clear();
+
+				*coolTextBox << xnumbers;
+
+				_isDec = true;
+				_isHex = false;
+				_opWasPressed = true;
+			}
+
 			break; }
-		case 10010: {
-			*coolTextBox << "DEC";
+		case 10011: {//HEX
+			if (!_isHex && xnumbers.length() != 0) {
+				coolTextBox->Clear();
+
+				num1 = stoi(xnumbers);
+				std::string isHex = CalcProcessor::GetInstance()->ToHex(num1);
+
+				*coolTextBox << isHex;
+
+				_isHex = true;
+				_isDec = false;
+				_opWasPressed = false;
+			}
+			else if (!_isDec && _isHex) {
+				coolTextBox->Clear();
+
+				*coolTextBox << "NUMBER WAS ALREADY HEXADECIMAL, CLEAR OR CONVERT TO HEX";
+
+				_opWasPressed = false;
+			}
 			break; }
-		case 10011: {
-			*coolTextBox << "HEX";
+		case 10012: { //BIN
+				
+			if (!_isBin && xnumbers.length() != 0) {
+				
+				coolTextBox->Clear();
+
+				num1 = stoi(xnumbers);
+				std::string isBin = CalcProcessor::GetInstance()->ToBin(num1);
+
+				*coolTextBox << isBin;
+
+				_isBin = true;
+				_isDec = false;
+				_opWasPressed = false;
+			}
+			else if (!_isDec && _isBin) {
+				coolTextBox->Clear();
+
+				*coolTextBox << "NUMBER WAS ALREADY BINARY, CLEAR OR CONVERT TO DEC";
+
+				_opWasPressed = true;
+			}
 			break; }
-		case 10012: {
-			*coolTextBox << "BIN";
-			break; }
-		case 10013: {
-			*coolTextBox << "MOD";
+		case 10013: {// MOD or %
+			if (_opWasPressed && xnumbers.length() != 0) {
+				num1 = stoi(xnumbers);
+
+				op = '%';
+
+				coolTextBox->Clear();
+
+				xnumbers = "";
+
+				_opWasPressed = false;
+			}
 			break; }
 		case 10014: {
-			*coolTextBox << "C";
+			coolTextBox->Clear();
+			num1 = 0;
+			num2 = 0;
+			op = NULL;
+			xnumbers = "";
+			_opWasPressed = true;
+			_equalWasPressed = false;
+			_isBin = false;
+			_isHex = false;
 			break; }
-		case 10015: {
-			*coolTextBox << "(-)";
+		case 10015: {//(-)
+			int temp = stoi(xnumbers);
+			temp = CalcProcessor::GetInstance()->CoolNegation(temp);
+			xnumbers = std::to_string(temp);
+			coolTextBox->Clear();
+			*coolTextBox << xnumbers;
 			break; }
-		case 10016:{
-			*coolTextBox << "*";
+		case 10016:{//*
+			if (_opWasPressed && xnumbers.length() != 0) {
+				num1 = stoi(xnumbers);
+
+				op = '*';
+
+				coolTextBox->Clear();
+
+				xnumbers = "";
+
+				_opWasPressed = false;
+			}
 			break; }
-		case 10017: {
-			*coolTextBox << "+";
+		case 10017: { //+
+			if (_opWasPressed && xnumbers.length() != 0) {
+				num1 = stoi(xnumbers);
+
+				op = '+';
+
+				coolTextBox->Clear();
+
+				xnumbers = "";
+
+				_opWasPressed = false;
+			}
+			
 			break; }
-		case 10018: {
-			*coolTextBox << "-";
+		case 10018: {//-
+			if (_opWasPressed && xnumbers.length() != 0) {
+				num1 = stoi(xnumbers);
+
+				op = '-';
+
+				coolTextBox->Clear();
+
+				xnumbers = "";
+
+				_opWasPressed = false;
+			}
 			break; }
-		case 10019: {
-			*coolTextBox << "=";
-			break; }
-		case 10020: {
-			*coolTextBox << "/";
+		case 10019: {// =
+
+			if (!_opWasPressed && xnumbers.length() != 0) {
+
+				coolTextBox->Clear();
+
+				_equalWasPressed = true;
+
+				num2 = stoi(xnumbers);
+
+				result = CalcProcessor::GetInstance()->CoolResult(num1, num2, op);
+
+				*coolTextBox << result;
+
+				_opWasPressed = true;
+
+				break;
+			}
+			 }
+		case 10020: {//     /
+			if (_opWasPressed && xnumbers.length() != 0) {
+				num1 = stoi(xnumbers);
+
+				op = '/';
+
+				coolTextBox->Clear();
+
+				xnumbers = "";
+
+				_opWasPressed = false;
+			}
 			break; }
 		}
 	
